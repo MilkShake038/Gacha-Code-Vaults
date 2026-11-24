@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gacha Code Vault</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme="light"]{--bg:#f6f7fb;--surface:#fff;--surface2:#eef0f6;--text:#1d2033;--muted:#667;--line:#dfe2ec;--accent:#4f6bed;--on-accent:#fff;--danger:#d64550;--shadow:0 2px 10px rgba(30,40,90,.08)}
+[data-theme="dark"]{--bg:#12131a;--surface:#1c1e29;--surface2:#262938;--text:#ecedf5;--muted:#9a9db3;--line:#32364a;--accent:#8c9bff;--on-accent:#12131a;--danger:#ff7a85;--shadow:0 2px 14px rgba(0,0,0,.4)}
+[data-theme="pastel"]{--bg:#fdf6ef;--surface:#fffdf9;--surface2:#efe8fb;--text:#4a3f5c;--muted:#8a7f9c;--line:#e6dbf3;--accent:#b79ced;--on-accent:#fff;--danger:#e47a9a;--shadow:0 3px 14px rgba(183,156,237,.22)}
+[data-theme="aesthetic"]{--bg:#efe4d3;--surface:#f8f0e3;--surface2:#e4d3bb;--text:#3d2b22;--muted:#7d6657;--line:#d2bd9f;--accent:#a4492f;--on-accent:#fbf3e6;--danger:#8f2a2a;--shadow:3px 3px 0 rgba(61,43,34,.14)}
+[data-theme="leafy"]{--bg:#e9f1ea;--surface:#f6faf6;--surface2:#d6e6d9;--text:#1f3a2c;--muted:#5b7a68;--line:#bfd6c5;--accent:#2f7d5b;--on-accent:#fff;--danger:#b5483f;--shadow:0 2px 12px rgba(47,125,91,.14)}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font:400 16px/1.5 Nunito,system-ui,sans-serif;min-height:100vh;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+h1,h2,h3{font-family:Fredoka,Nunito,system-ui,sans-serif;font-weight:600;margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+header{position:sticky;top:0;z-index:10;background:var(--surface);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+.bar{max-width:1100px;margin:auto;display:flex;gap:12px;align-items:center;padding:12px 16px}
+.bar h1{font-size:1.4rem;white-space:nowrap}
+.search{flex:1;min-width:0}
+.search input{width:100%;padding:10px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface2)}
+main{max-width:1100px;margin:auto;padding:16px}
+.filters{display:grid;gap:10px;margin-bottom:16px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.row .lbl{font-weight:700;color:var(--muted);font-size:.9rem;min-width:84px}
+.chip{border:1px solid var(--line);background:var(--surface);padding:5px 13px;border-radius:999px;font-size:.92rem}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.btn{border:1px solid var(--line);background:var(--surface);padding:8px 14px;border-radius:12px;font-weight:700}
+.btn.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.btn.danger{color:var(--danger)}
+.btn.icon{padding:8px 11px}
+.btn:hover{filter:brightness(.96)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;margin-top:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
+.shot{aspect-ratio:4/3;background:var(--surface2);display:grid;place-items:center;color:var(--muted);font-size:.9rem;border:0;width:100%;padding:0}
+.shot img{width:100%;height:100%;object-fit:cover;display:block}
+.body{padding:14px;display:flex;flex-direction:column;gap:8px;flex:1}
+.body h3{font-size:1.2rem;word-break:break-word}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:.78rem;font-weight:700;padding:2px 10px;border-radius:999px;background:var(--surface2)}
+.tag.app{background:var(--accent);color:var(--on-accent)}
+.code{font:.82rem/1.4 ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:10px;padding:8px 10px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-all}
+.actions{display:flex;gap:8px;margin-top:auto}
+.actions .copy{flex:1}
+.empty{text-align:center;padding:48px 16px;color:var(--muted)}
+.empty h2{color:var(--text);margin-bottom:6px}
+dialog{border:1px solid var(--line);border-radius:18px;background:var(--surface);color:var(--text);padding:0;width:min(560px,94vw);max-height:92vh;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(10,10,25,.55)}
+.mh{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line)}
+.mb{padding:18px;display:grid;gap:14px;overflow:auto;max-height:70vh}
+.mf{display:flex;justify-content:flex-end;gap:10px;padding:14px 18px;border-top:1px solid var(--line)}
+label.f{display:grid;gap:5px;font-weight:700;font-size:.92rem}
+.in{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface2)}
+textarea.in{min-height:110px;resize:vertical;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85rem}
+fieldset{border:0;margin:0;padding:0;display:grid;gap:6px}
+legend{font-weight:700;font-size:.92rem;padding:0;margin-bottom:6px}
+.themes{display:grid;gap:8px}
+.themes label{display:flex;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:12px;cursor:pointer}
+.themes label:has(input:checked){border-color:var(--accent);background:var(--surface2)}
+.preview{display:flex;gap:12px;align-items:center}
+.preview img{width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
+.x{border:0;background:none;font-size:1.3rem;padding:4px 8px}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:4px 6px 4px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface2);font-size:.9rem}
+.pill button{border:0;background:none;padding:0 6px;color:var(--danger);font-weight:700}
+#lightbox{width:auto;background:transparent;border:0;box-shadow:none}
+#lightbox img{max-width:94vw;max-height:86vh;border-radius:12px;display:block}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--text);color:var(--bg);padding:10px 18px;border-radius:999px;opacity:0;pointer-events:none;transition:.2s;z-index:50;font-weight:700}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+.hidden{display:none!important}
+@media (max-width:560px){.bar{flex-wrap:wrap}.search{order:3;flex-basis:100%}.row .lbl{min-width:100%}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <h1>🎀 Gacha Code Vault</h1>
+    <div class="search"><input id="q" type="search" placeholder="Search by name or category" aria-label="Search characters"></div>
+    <button class="btn" id="openSettings" aria-label="Open settings">⚙️ Settings</button>
+  </div>
+</header>
+
+<main>
+  <div class="filters">
+    <div class="row"><span class="lbl">Categories</span><div class="row" id="catChips"></div></div>
+    <div class="row"><span class="lbl">App</span><div class="row" id="appChips"></div></div>
+  </div>
+  <button class="btn primary" id="addBtn">+ Add new character code</button>
+  <div class="grid" id="grid"></div>
+  <div class="empty hidden" id="empty"></div>
+</main>
+
+<!-- Add / edit -->
+<dialog id="formDlg" aria-labelledby="formTitle">
+  <div class="mh"><h2 id="formTitle">✨ Save a character code</h2><button class="x" data-close aria-label="Close">✕</button></div>
+  <div class="mb">
+    <label class="f">Character name<input class="in" id="fName" placeholder="e.g. Mani" maxlength="80"></label>
+    <fieldset>
+      <legend>Which Gacha app is this from?</legend>
+      <div class="row" id="appPick">
+        <button type="button" class="chip" data-app="Gacha Club" aria-pressed="false">Gacha Club</button>
+        <button type="button" class="chip" data-app="Gacha Life 2" aria-pressed="false">Gacha Life 2</button>
+        <button type="button" class="chip" data-app="Other" aria-pressed="false">Other Gacha</button>
+        <input class="in hidden" id="fOther" placeholder="Name of the app" maxlength="40" style="width:200px" aria-label="Other app name">
+      </div>
+    </fieldset>
+    <div>
+      <div class="row">
+        <label class="f" style="flex:1;min-width:160px">Category / group
+          <select class="in" id="fCat"></select></label>
+        <button type="button" class="btn" id="newGroupBtn" style="align-self:end">+ Create custom group</button>
+      </div>
+      <div class="row hidden" id="newGroupRow" style="margin-top:8px">
+        <input class="in" id="newGroupName" placeholder="New group name" maxlength="30" style="flex:1">
+        <button type="button" class="btn primary" id="newGroupSave">Add group</button>
+      </div>
+    </div>
+    <label class="f">Character code<textarea class="in" id="fCode" placeholder="Paste or write the offline/online character code here..."></textarea></label>
+    <div>
+      <div class="legend" style="font-weight:700;font-size:.92rem;margin-bottom:6px">Character screenshot (optional)</div>
+      <div class="preview">
+        <button type="button" class="btn" id="attachBtn">📎 Attach screenshot</button>
+        <input type="file" id="fFile" accept="image/*" class="hidden">
+        <div class="preview hidden" id="prevWrap"><img id="prevImg" alt="Screenshot preview"><button type="button" class="btn danger" id="rmShot">Remove</button></div>
+      </div>
+    </div>
+    <div id="formErr" class="hidden" style="color:var(--danger);font-weight:700" role="alert"></div>
+  </div>
+  <div class="mf"><button class="btn" data-close>Cancel</button><button class="btn primary" id="saveBtn">💾 Save to vault</button></div>
+</dialog>
+
+<!-- Settings -->
+<dialog id="setDlg" aria-labelledby="setTitle">
+  <div class="mh"><h2 id="setTitle">⚙️ Vault settings</h2><button class="x" data-close aria-label="Close">✕</button></div>
+  <div class="mb">
+    <fieldset>
+      <legend>Choose your theme</legend>
+      <div class="themes" id="themes"></div>
+    </fieldset>
+    <div>
+      <div style="font-weight:700;margin-bottom:8px">Manage custom categories</div>
+      <div class="row" id="catManage"></div>
+      <div class="row" style="margin-top:10px">
+        <input class="in" id="addCatName" placeholder="New group name" maxlength="30" style="flex:1">
+        <button class="btn primary" id="addCatBtn">+ Add group</button>
+      </div>
+    </div>
+    <div>
+      <div style="font-weight:700;margin-bottom:8px">Storage &amp; backup</div>
+      <div class="row">
+        <button class="btn" id="exportBtn">📤 Export JSON backup</button>
+        <button class="btn" id="importBtn">📥 Import backup</button>
+        <button class="btn danger" id="clearBtn">🗑️ Clear all</button>
+        <input type="file" id="importFile" accept="application/json,.json" class="hidden">
+      </div>
+      <p style="color:var(--muted);font-size:.88rem;margin:10px 0 0">Everything is saved in this browser only. Export a backup before clearing site data or switching devices.</p>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="lightbox"><img id="lbImg" alt="Character screenshot"></dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+const $ = id => document.getElementById(id);
+const APPS = ["Gacha Club", "Gacha Life 2"];
+const THEMES = [
+  ["light", "☀️ Light", "Bright, clean daylight surfaces"],
+  ["dark", "🌙 Dark", "Low-glare dark mode for late nights"],
+  ["pastel", "🌸 Pastel", "Soft lavender, mint, blush and cream"],
+  ["aesthetic", "✨ Aesthetic", "Warm editorial, cozy scrapbook tones"],
+  ["leafy", "🌿 Leafy / greeny cool", "Sage, moss and cool mint accents"]
+];
+const LS = { theme: "gcv_theme", cats: "gcv_cats" };
+const state = { chars: [], cats: [], theme: "pastel", cat: "All", app: "All", q: "", editId: null, shot: null, app_: "" };
+
+/* ---------- storage ---------- */
+function lsGet(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } }
+function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { toast("Browser storage is full or blocked. Export a backup."); return false; } }
+let db;
+function openDB() {
+  return new Promise((res, rej) => {
+    const r = indexedDB.open("gachaVault", 1);
+    r.onupgradeneeded = () => r.result.createObjectStore("chars", { keyPath: "id" });
+    r.onsuccess = () => res(r.result);
+    r.onerror = () => rej(r.error);
+  });
+}
+const tx = (mode, fn) => new Promise((res, rej) => {
+  const t = db.transaction("chars", mode), s = t.objectStore("chars");
+  const out = fn(s);
+  t.oncomplete = () => res(out && out.result);
+  t.onerror = t.onabort = () => rej(t.error);
+});
+const dbAll = () => tx("readonly", s => s.getAll());
+const dbPut = c => tx("readwrite", s => s.put(c));
+const dbDel = id => tx("readwrite", s => s.delete(id));
+const dbClear = () => tx("readwrite", s => s.clear());
+
+/* ---------- helpers ---------- */
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+let tt;
+function toast(msg) { const t = $("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(tt); tt = setTimeout(() => t.classList.remove("show"), 2200); }
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+function shrink(file) {
+  return new Promise((res, rej) => {
+    const fr = new FileReader();
+    fr.onerror = () => rej(new Error("read"));
+    fr.onload = () => {
+      const img = new Image();
+      img.onerror = () => rej(new Error("img"));
+      img.onload = () => {
+        const max = 900, k = Math.min(1, max / Math.max(img.width, img.height));
+        const c = document.createElement("canvas");
+        c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        res(c.toDataURL("image/jpeg", .82));
+      };
+      img.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+const appOf = c => c.app === "Other" ? (c.otherApp || "Other") : c.app;
+
+/* ---------- theme ---------- */
+function applyTheme(t) { state.theme = t; document.documentElement.dataset.theme = t; lsSet(LS.theme, t); }
+
+/* ---------- render ---------- */
+function chip(label, pressed, attrs) { return `<button class="chip" aria-pressed="${pressed}" ${attrs}>${esc(label)}</button>`; }
+function render() {
+  const counts = n => state.chars.filter(c => c.cat === n).length;
+  $("catChips").innerHTML = chip(`All (${state.chars.length})`, state.cat === "All", 'data-cat="All"') +
+    state.cats.map(n => chip(`${n} (${counts(n)})`, state.cat === n, `data-cat="${esc(n)}"`)).join("") +
+    `<button class="chip" id="chipNew">+ New group</button>`;
+  const others = [...new Set(state.chars.filter(c => c.app === "Other").map(c => c.otherApp || "Other"))];
+  const apps = ["All", ...APPS, "Other"];
+  $("appChips").innerHTML = apps.map(a => chip(a === "All" ? "All apps" : a, state.app === a, `data-app="${esc(a)}"`)).join("");
+
+  const q = state.q.trim().toLowerCase();
+  const list = state.chars.filter(c =>
+    (state.cat === "All" || c.cat === state.cat) &&
+    (state.app === "All" || c.app === state.app) &&
+    (!q || c.name.toLowerCase().includes(q) || (c.cat || "").toLowerCase().includes(q) || appOf(c).toLowerCase().includes(q))
+  ).sort((a, b) => b.updated - a.updated);
+
+  $("grid").innerHTML = list.map(c => `
+    <article class="card" data-id="${c.id}">
+      ${c.shot ? `<button class="shot" data-act="zoom" aria-label="View ${esc(c.name)} screenshot full size"><img src="${c.shot}" alt="${esc(c.name)} screenshot" loading="lazy"></button>` : `<div class="shot">No screenshot attached</div>`}
+      <div class="body">
+        <h3>${esc(c.name)}</h3>
+        <div class="tags"><span class="tag app">${esc(appOf(c))}</span>${c.cat ? `<span class="tag">${esc(c.cat)}</span>` : ""}</div>
+        <div class="code" title="Character code">${esc(c.code)}</div>
+        <div class="actions">
+          <button class="btn copy" data-act="copy">📋 Copy</button>
+          <button class="btn icon" data-act="edit" aria-label="Edit ${esc(c.name)}">✏️</button>
+          <button class="btn icon" data-act="del" aria-label="Delete ${esc(c.name)}">🗑️</button>
+        </div>
+      </div>
+    </article>`).join("");
+
+  const e = $("empty");
+  if (list.length) e.classList.add("hidden");
+  else {
+    e.classList.remove("hidden");
+    e.innerHTML = state.chars.length
+      ? `<h2>No matches</h2><p>Try a different search, category or app filter.</p>`
+      : `<h2>Your vault is empty</h2><p>Add your first character code to keep it safe and easy to copy.</p>`;
+  }
+}
+
+function renderSettings() {
+  $("themes").innerHTML = THEMES.map(([k, n, d]) =>
+    `<label><input type="radio" name="theme" value="${k}" ${state.theme === k ? "checked" : ""}><span><strong>${n}</strong><br><small style="color:var(--muted)">${d}</small></span></label>`).join("");
+  $("catManage").innerHTML = state.cats.length
+    ? state.cats.map(n => `<span class="pill">${esc(n)}<button data-rmcat="${esc(n)}" aria-label="Remove group ${esc(n)}">✕</button></span>`).join("")
+    : `<span style="color:var(--muted)">No custom groups yet.</span>`;
+}
+
+function fillCatSelect(sel) {
+  $("fCat").innerHTML = `<option value="">No group</option>` + state.cats.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join("");
+  $("fCat").value = sel || "";
+}
+
+/* ---------- categories ---------- */
+function addCat(name) {
+  name = name.trim();
+  if (!name) return null;
+  const hit = state.cats.find(c => c.toLowerCase() === name.toLowerCase());
+  if (hit) return hit;
+  state.cats.push(name); lsSet(LS.cats, state.cats);
+  return name;
+}
+async function removeCat(name) {
+  const n = state.chars.filter(c => c.cat === name).length;
+  if (!confirm(n ? `Remove "${name}"? ${n} character${n > 1 ? "s" : ""} will stay in the vault with no group.` : `Remove "${name}"?`)) return;
+  state.cats = state.cats.filter(c => c !== name); lsSet(LS.cats, state.cats);
+  for (const c of state.chars.filter(c => c.cat === name)) { c.cat = ""; await dbPut(c); }
+  if (state.cat === name) state.cat = "All";
+  renderSettings(); render();
+}
+
+/* ---------- form ---------- */
+function setApp(a) {
+  state.app_ = a;
+  document.querySelectorAll("#appPick .chip").forEach(b => b.setAttribute("aria-pressed", b.dataset.app === a));
+  $("fOther").classList.toggle("hidden", a !== "Other");
+}
+function setShot(d) {
+  state.shot = d;
+  $("prevWrap").classList.toggle("hidden", !d);
+  if (d) $("prevImg").src = d;
+}
+function openForm(id) {
+  state.editId = id || null;
+  const c = id ? state.chars.find(x => x.id === id) : null;
+  $("formTitle").textContent = c ? "✏️ Edit character code" : "✨ Save a character code";
+  $("fName").value = c ? c.name : "";
+  $("fCode").value = c ? c.code : "";
+  $("fOther").value = c && c.app === "Other" ? c.otherApp || "" : "";
+  setApp(c ? c.app : "");
+  fillCatSelect(c ? c.cat : (state.cat !== "All" ? state.cat : ""));
+  setShot(c ? c.shot : null);
+  $("newGroupRow").classList.add("hidden"); $("newGroupName").value = "";
+  $("formErr").classList.add("hidden");
+  $("formDlg").showModal();
+  $("fName").focus();
+}
+function formErr(m) { const e = $("formErr"); e.textContent = m; e.classList.remove("hidden"); }
+async function save() {
+  const name = $("fName").value.trim(), code = $("fCode").value.trim();
+  if (!name) return formErr("Enter a character name.");
+  if (!state.app_) return formErr("Pick which Gacha app this code is from.");
+  if (state.app_ === "Other" && !$("fOther").value.trim()) return formErr("Enter the name of the other Gacha app.");
+  if (!code) return formErr("Paste the character code.");
+  const old = state.editId ? state.chars.find(x => x.id === state.editId) : null;
+  const rec = {
+    id: old ? old.id : uid(), name, code, app: state.app_,
+    otherApp: state.app_ === "Other" ? $("fOther").value.trim() : "",
+    cat: $("fCat").value, shot: state.shot || null,
+    created: old ? old.created : Date.now(), updated: Date.now()
+  };
+  try { await dbPut(rec); }
+  catch (e) { return formErr("Couldn't save. Browser storage may be full. Remove the screenshot or delete old entries, then try again."); }
+  if (old) Object.assign(old, rec); else state.chars.push(rec);
+  $("formDlg").close(); render(); toast(old ? "Saved changes" : "Saved to vault");
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click", async e => {
+  const t = e.target.closest("button, .chip");
+  if (!t) return;
+  if (t.hasAttribute("data-close")) t.closest("dialog").close();
+  if (t.dataset.cat !== undefined && t.closest("#catChips")) { state.cat = t.dataset.cat; render(); }
+  if (t.dataset.app !== undefined && t.closest("#appChips")) { state.app = t.dataset.app; render(); }
+  if (t.dataset.app !== undefined && t.closest("#appPick")) setApp(t.dataset.app);
+  if (t.id === "chipNew") { renderSettings(); $("setDlg").showModal(); $("addCatName").focus(); }
+  if (t.dataset.rmcat) removeCat(t.dataset.rmcat);
+  const card = t.closest(".card");
+  if (card && t.dataset.act) {
+    const c = state.chars.find(x => x.id === card.dataset.id);
+    if (t.dataset.act === "copy") {
+      try { await navigator.clipboard.writeText(c.code); }
+      catch { const ta = document.createElement("textarea"); ta.value = c.code; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove(); }
+      toast(`Copied code for ${c.name}`);
+    }
+    if (t.dataset.act === "edit") openForm(c.id);
+    if (t.dataset.act === "zoom") { $("lbImg").src = c.shot; $("lightbox").showModal(); }
+    if (t.dataset.act === "del" && confirm(`Delete ${c.name}? This can't be undone.`)) {
+      await dbDel(c.id); state.chars = state.chars.filter(x => x.id !== c.id); render(); toast("Deleted");
+    }
+  }
+});
+$("lightbox").addEventListener("click", () => $("lightbox").close());
+document.querySelectorAll("dialog:not(#lightbox)").forEach(d => d.addEventListener("click", e => { if (e.target === d) d.close(); }));
+
+$("addBtn").onclick = () => openForm();
+$("openSettings").onclick = () => { renderSettings(); $("setDlg").showModal(); };
+$("saveBtn").onclick = save;
+$("q").oninput = e => { state.q = e.target.value; render(); };
+$("attachBtn").onclick = () => $("fFile").click();
+$("rmShot").onclick = () => { setShot(null); $("fFile").value = ""; };
+$("fFile").onchange = async e => {
+  const f = e.target.files[0]; if (!f) return;
+  try { setShot(await shrink(f)); } catch { formErr("That file couldn't be read as an image."); }
+};
+$("newGroupBtn").onclick = () => { $("newGroupRow").classList.toggle("hidden"); $("newGroupName").focus(); };
+$("newGroupSave").onclick = () => {
+  const n = addCat($("newGroupName").value); if (!n) return;
+  fillCatSelect(n); $("newGroupName").value = ""; $("newGroupRow").classList.add("hidden"); render();
+};
+$("addCatBtn").onclick = () => { if (addCat($("addCatName").value)) { $("addCatName").value = ""; renderSettings(); render(); } };
+$("themes").addEventListener("change", e => { if (e.target.name === "theme") applyTheme(e.target.value); });
+
+$("exportBtn").onclick = () => {
+  const data = { app: "gacha-code-vault", version: 1, exported: new Date().toISOString(), theme: state.theme, categories: state.cats, characters: state.chars };
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], { type: "application/json" }));
+  a.download = `gacha-vault-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  a.click(); URL.revokeObjectURL(a.href); toast("Backup exported");
+};
+$("importBtn").onclick = () => $("importFile").click();
+$("importFile").onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+  try {
+    const d = JSON.parse(await f.text());
+    if (!Array.isArray(d.characters)) throw 0;
+    const replace = confirm("Import backup.\n\nOK = replace everything in the vault\nCancel = merge with what's already here");
+    if (replace) { await dbClear(); state.chars = []; }
+    for (const c of d.characters) {
+      if (!c || !c.name || !c.code) continue;
+      const rec = { id: c.id || uid(), name: String(c.name), code: String(c.code), app: c.app || "Other", otherApp: c.otherApp || "", cat: c.cat || "", shot: c.shot || null, created: c.created || Date.now(), updated: c.updated || Date.now() };
+      await dbPut(rec);
+      const i = state.chars.findIndex(x => x.id === rec.id);
+      if (i >= 0) state.chars[i] = rec; else state.chars.push(rec);
+    }
+    (d.categories || []).forEach(addCat);
+    state.chars.forEach(c => c.cat && addCat(c.cat));
+    renderSettings(); render(); toast("Backup imported");
+  } catch { toast("That file isn't a valid vault backup."); }
+};
+$("clearBtn").onclick = async () => {
+  if (!confirm("Clear the entire vault? All characters and groups will be deleted. Export a backup first if you want to keep them.")) return;
+  await dbClear(); state.chars = []; state.cats = []; state.cat = "All"; lsSet(LS.cats, []);
+  renderSettings(); render(); toast("Vault cleared");
+};
+
+/* ---------- init ---------- */
+(async function init() {
+  state.cats = lsGet(LS.cats, ["Main OCs", "Animations", "Skits"]);
+  applyTheme(lsGet(LS.theme, "pastel"));
+  try { db = await openDB(); state.chars = await dbAll(); }
+  catch { toast("Couldn't open browser storage. Saving is unavailable in this mode."); db = null; }
+  render();
+})();
+})();
+</script>
+</body>
+</html>
